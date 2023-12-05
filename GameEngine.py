@@ -139,8 +139,8 @@ class GameEngine:
         :return: None
         """
         # captain's current position
-        position_x = self._captain.get_x()
-        position_y = self._captain.get_y() + horizontal
+        position_x = self._captain.get_x() + horizontal
+        position_y = self._captain.get_y()
         # if new position is None, move captain to new position
         if self._field[position_y][position_x] is None:
             self._captain.set_position(position_x, position_y)
@@ -157,4 +157,37 @@ class GameEngine:
         # if new position is rabbit, informed user, captain's position no change
         elif isinstance(self._field[position_y][position_x], Rabbit):
             print("Don't step on the bunnies!")
-        
+
+    def moveCaptain(self):
+        """
+        move Captain direction, accept both uppercase and lowercase of input
+        if input other words, skip
+        :return: None
+        """
+        direction = input("Would you like to move up(W), down(S), left(A), or right(D):")
+        if direction == "w" or direction == "W":
+            position_y = self._captain.get_y() + 1
+            if 0 <= position_y < len(self._field):
+                self.moveCptVertical(1)
+            else:
+                print("You can't move that way!")
+        elif direction == "s" or direction == "S":
+            position_y = self._captain.get_y() -1
+            if 0 <= position_y < len(self._field):
+                self.moveCptVertical(-1)
+            else:
+                print("You can't move that way!")
+        elif direction == "a" or direction =="A":
+            position_x = self._captain.get_x() -1
+            if 0 <= position_x < len(self._field[0]):
+                self.moveCptHorizontal(-1)
+            else:
+                print("You can't move that way!")
+        elif direction == "d" or direction == "D":
+            position_x = self._captain.get_x() + 1
+            if 0 <= position_x < len(self._field[0]):
+                self.moveCptHorizontal(1)
+            else:
+                print("You can't move that way!")
+        else:
+            print(f"{direction} is not a valid option")
