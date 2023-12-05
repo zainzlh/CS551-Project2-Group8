@@ -222,3 +222,41 @@ class GameEngine:
                 print("You can't move that way!")
         else:
             print(f"{direction} is not a valid option")
+    def gameOver(self):
+        """
+        when veggies all clear, show game over message and related information
+        :return: None
+        """
+        print("GAME OVER!")
+        print("You managed to harvest the following vegetables:")
+        for item in self._captain.get_veggies_collected():
+            print(item)
+        print(f"Your score was: {self.getScore()}")
+
+    def highScore(self):
+        """
+        store user's name and score in high_score file. sort all score, show as a list
+        :return: None
+        """
+        curr_score = None
+        if os.path.exists("highscore.data"):
+            with open("highscore.data", "rb") as file:
+                high_scores = pickle.load(file)
+        else:
+            high_scores = []
+        name = input("Please enter your three initials to go on the scoreboard: ")
+        if not high_scores:
+            curr_score = (name, self.getScore())
+            high_scores.append(curr_score)
+        else:
+            curr_score = (name, self.getScore())
+            high_scores.append(curr_score)
+            high_scores.sort(key=lambda x: x[1], reverse=True)
+
+        print("HIGH SCORES")
+        print("Name\tScore")
+        for name, score in high_scores:
+            print(f"{name}\t\t{score}")
+
+        with open("highscore.data", 'wb') as file:
+            pickle.dump(high_scores, file)
