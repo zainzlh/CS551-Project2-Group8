@@ -71,6 +71,37 @@ class GameEngine:
 
     def intro():
 
+    def printField(self):
+        """
+        print boundary and field
+        :return: None
+        """
+        # get boundary length
+        max_length = 0
+        for row in self._field:
+            for col in self._field:
+                if self._field[row][col] is None:
+                    max_length += 1
+                else:
+                    max_length += self._field[row][col]
+        print("#" * (max_length + 2))
+        # print field
+        for row in self._field:
+            line = ""
+            for col in self._field:
+                if self._field[row][col] is None:
+                    line += " "
+                else:
+                    line += self._field[row][col]
+                print("#" + line + "#")
+            print("#" * (max_length + 2))
+
+    def getScore(self):
+        """
+        :return: current score
+        """
+        return self._score
+
     def moveRabbits(self):
         """
         the function control rabbits movement, they can move 1 steps each time(up, down, left or right)
