@@ -71,16 +71,16 @@ class GameEngine:
 
     def intro():
 
-        def moveRabbits(self):
+    def moveRabbits(self):
         """
-        the function controls rabbits movement, they can move 1 step each time(up, down, left or right)
-        when the new position is out of the boundary or the new position is occupied by other rabbits or captains, skip
-        if have veggie in the new position, remove the veggie.
+        the function control rabbits movement, they can move 1 steps each time(up, down, left or right)
+        when new position out of boundary or new position occupied by other rabbits or captains, skip
+        if have veggie on new position, remove veggie.
         :return: None
         """
         field_x = len(self._field[0])
         field_y = len(self._field)
-
+    
         for rabbit in self._rabbits:
             new_x, new_y = rabbit.get_x(), rabbit.get_y()
             # get random number, 0-up, 1-down, 2-left, 3-right
@@ -93,16 +93,68 @@ class GameEngine:
                 new_x -= 1
             else:
                 new_x += 1
-
+    
             # determine out of boundary
             if 0 <= new_x < field_x and 0 <= new_y < field_y:
                 # determine new position have other rabbit or captain
-                if not isinstance(self._field[new_x][new_y], Rabbit) or isinstance(self._field[new_x][new_y], Captain):
+                if not isinstance(self._field[new_y][new_x], Rabbit) or isinstance(self._field[new_y][new_x], Captain):
                     # determine new position have veggie, remove veggie
-                    if isinstance(self._field[new_x][new_y], Veggie):
-                        self._field[new_x][new_y] = None
+                    if isinstance(self._field[new_y][new_x], Veggie):
+                        self._field[new_y][new_x] = None
                         # move rabbit to new position
                         rabbit.set_position(new_x, new_y)
-                        self._field[new_x][new_y] = rabbit
-                        self._field[rabbit.get_x()][rabbit.get_y()] = None
+                        self._field[new_y][new_x] = rabbit
+                        self._field[rabbit.get_y()] [rabbit.get_x()] = None
+                        
+    def moveCptVertical(self, vertical):
+        """
+        Realize the movement of the captain in the vertical direction
+        :param vertical: 1 or -1, the value of vertical direction
+        :return: None
+        """
+        # captain's current position
+        position_x = self._captain.get_x()
+        position_y = self._captain.get_y() + vertical
+        # if new position is None, move captain to new position
+        if self._field[position_y][position_x] is None:
+            self._captain.set_position(position_x, position_y)
+            self._field[self._captain.get_y()][position_x] = None
+        # if new position have veggie, can collect and add score
+        elif isinstance(self._field[position_y][position_x], Veggie):
+            veggie = self._field[position_y][position_x]
+            print(f"Yummy! A delicious {veggie.get_name()}")
+            self._captain.add_veggie(veggie)
+            self._score += veggie.get_points()
+            self._captain.set_position(position_x, position_y)
+            self._field[position_y][position_x] = self._captain
+            self._field[self._captain.get_y()][position_x] = None
+        # if new position is rabbit, informed user, captain's position no change
+        elif isinstance(self._field[position_y][position_x], Rabbit):
+            print("Don't step on the bunnies!")
+
+    def moveCptHorizontal(self, horizontal):
+        """
+        Realize the movement of the captain in the horizontal direction
+        :param horizontal: 1 or -1, the value of horizontal direction
+        :return: None
+        """
+        # captain's current position
+        position_x = self._captain.get_x()
+        position_y = self._captain.get_y() + horizontal
+        # if new position is None, move captain to new position
+        if self._field[position_y][position_x] is None:
+            self._captain.set_position(position_x, position_y)
+            self._field[self._captain.get_y()][position_x] = None
+        # if new position have veggie, can collect and add score
+        elif isinstance(self._field[position_y][position_x], Veggie):
+            veggie = self._field[position_y][position_x]
+            print(f"Yummy! A delicious {veggie.get_name()}")
+            self._captain.add_veggie(veggie)
+            self._score += veggie.get_points()
+            self._captain.set_position(position_x, position_y)
+            self._field[position_y][position_x] = self._captain
+            self._field[self._captain.get_y()][position_x] = None
+        # if new position is rabbit, informed user, captain's position no change
+        elif isinstance(self._field[position_y][position_x], Rabbit):
+            print("Don't step on the bunnies!")
         
