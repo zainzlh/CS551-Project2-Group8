@@ -69,7 +69,7 @@ class GameEngine:
         self.initRabbits()
 
     def remainingVeggies(self):
-        return sum(row.count(None) for row in self._field)
+        return sum(row.count(veggie) for row in self._field for veggie in self._veggies)
 
     def intro(self):
         """
@@ -86,8 +86,8 @@ class GameEngine:
         for veggie in self._veggies:
             print(f"{veggie.__str__()}")
 
-        print("Captain Veggie is V, and the rabbits are R's.")
-        print("Good luck!")
+        print("\nCaptain Veggie is V, and the rabbits are R's.")
+        print("\nGood luck!")
 
     def printField(self):
         """
