@@ -4,6 +4,7 @@ from Veggie import Veggie
 from Captain import Captain
 from Rabbit import Rabbit
 import csv
+import pickle
 
 
 class GameEngine:
@@ -29,8 +30,9 @@ class GameEngine:
         filename = ""
         while file_not_found:
             filename = input("Please enter the name of the vegetable point file: ")
-            if os.path.exists(filename):
+            if not os.path.exists(filename):
                 print(f"{filename} does not exist!", end="")
+            else:
                 file_not_found = False
 
         with open(filename, 'r') as veggie_file:
@@ -41,13 +43,13 @@ class GameEngine:
             self._field = [[None for _ in range(field_size[1])] for _ in range(field_size[0])]
 
             for row in veggie_csv:
-                inhabitant, name, points = row
+                name, inhabitant, points = row
                 veggie = Veggie(inhabitant, name, int(points))
                 self._veggies.append(veggie)
 
-                for _ in range(self.NUMBEROFVEGGIES):
-                    x, y = self.getRandomEmptyLocation()
-                    self._field[x][y] = veggie
+            for _ in range(self.NUMBEROFVEGGIES):
+                x, y = self.getRandomEmptyLocation()
+                self._field[x][y] = random.choice(self._veggies)
 
     def initCaptain(self):
         x, y = self.getRandomEmptyLocation()
@@ -67,9 +69,25 @@ class GameEngine:
         self.initRabbits()
 
     def remainingVeggies(self):
-        return sum(row.count(None) for row in self._field)
+        return sum(row.count(veggie) for row in self._field for veggie in self._veggies)
 
-    def intro():
+    def intro(self):
+        """
+        intro the game
+        :return: None
+        """
+        print("Welcome to Captain Veggie!")
+        print("The rabbits have invaded your garden and you must harvest")
+        print("as many vegetables as possible before the rabbits eat them")
+        print("all! Each vegetable is worth a different number of points")
+        print("so go for the high score!")
+
+        print("\nThe vegetables are:")
+        for veggie in self._veggies:
+            print(f"{veggie.__str__()}")
+
+        print("\nCaptain Veggie is V, and the rabbits are R's.")
+        print("\nGood luck!")
 
     def printField(self):
         """
@@ -228,7 +246,6 @@ class GameEngine:
         else:
             print(f"{direction} is not a valid option")
 
-    
     def gameOver(self):
         """
         when veggies all clear, show game over message and related information
