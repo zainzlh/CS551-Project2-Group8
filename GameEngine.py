@@ -47,9 +47,9 @@ class GameEngine:
                 veggie = Veggie(inhabitant, name, int(points))
                 self._veggies.append(veggie)
 
-                for _ in range(self.NUMBEROFVEGGIES):
-                    x, y = self.getRandomEmptyLocation()
-                    self._field[x][y] = veggie
+            for _ in range(self.NUMBEROFVEGGIES):
+                x, y = self.getRandomEmptyLocation()
+                self._field[x][y] = random.choice(self._veggies)
 
     def initCaptain(self):
         x, y = self.getRandomEmptyLocation()
