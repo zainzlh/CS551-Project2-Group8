@@ -4,6 +4,7 @@ from Veggie import Veggie
 from Captain import Captain
 from Rabbit import Rabbit
 import csv
+import pickle
 
 
 class GameEngine:
@@ -29,8 +30,9 @@ class GameEngine:
         filename = ""
         while file_not_found:
             filename = input("Please enter the name of the vegetable point file: ")
-            if os.path.exists(filename):
+            if not os.path.exists(filename):
                 print(f"{filename} does not exist!", end="")
+            else:
                 file_not_found = False
 
         with open(filename, 'r') as veggie_file:
@@ -69,7 +71,23 @@ class GameEngine:
     def remainingVeggies(self):
         return sum(row.count(None) for row in self._field)
 
-    def intro():
+    def intro(self):
+        """
+        intro the game
+        :return: None
+        """
+        print("Welcome to Captain Veggie!")
+        print("The rabbits have invaded your garden and you must harvest")
+        print("as many vegetables as possible before the rabbits eat them")
+        print("all! Each vegetable is worth a different number of points")
+        print("so go for the high score!")
+
+        print("\nThe vegetables are:")
+        for veggie in self._veggies:
+            print(f"{veggie.__str__()}")
+
+        print("Captain Veggie is V, and the rabbits are R's.")
+        print("Good luck!")
 
     def printField(self):
         """
@@ -222,6 +240,7 @@ class GameEngine:
                 print("You can't move that way!")
         else:
             print(f"{direction} is not a valid option")
+
     def gameOver(self):
         """
         when veggies all clear, show game over message and related information
