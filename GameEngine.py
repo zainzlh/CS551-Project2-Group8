@@ -78,12 +78,11 @@ class GameEngine:
         """
         # get boundary length
         max_length = 0
-        for row in self._field:
-            for item in row:
-                if item is None:
-                    max_length += 1
-                else:
-                    max_length += len(item.get_inhabitant())
+        for item in self._field[0]:
+            if item is None:
+                max_length += 1
+            else:
+                max_length += len(item.get_inhabitant())
         print("#" * (max_length + 2))
         # print field
         for row in self._field:
@@ -93,8 +92,8 @@ class GameEngine:
                     line += " "
                 else:
                     line += item.get_inhabitant()
-                print("#" + line + "#")
-            print("#" * (max_length + 2))
+            print("#" + line + "#")
+        print("#" * (max_length + 2))
 
     def getScore(self):
         """
@@ -109,9 +108,9 @@ class GameEngine:
         if have veggie on new position, remove veggie.
         :return: None
         """
-        field_x = len(self._field[0])
-        field_y = len(self._field)
-    
+        field_x = len(self._field)
+        field_y = len(self._field[0])
+
         for rabbit in self._rabbits:
             new_x, new_y = rabbit.get_x(), rabbit.get_y()
             # get random number, 0-up, 1-down, 2-left, 3-right
@@ -133,9 +132,13 @@ class GameEngine:
                     if isinstance(self._field[new_x][new_y], Veggie):
                         self._field[new_x][new_y] = None
                         # move rabbit to new position
+                        self._field[rabbit.get_x()][rabbit.get_y()] = None
                         rabbit.set_position(new_x, new_y)
                         self._field[new_x][new_y] = rabbit
+                    else:
                         self._field[rabbit.get_x()][rabbit.get_y()] = None
+                        rabbit.set_position(new_x, new_y)
+                        self._field[new_x][new_y] = rabbit
                         
     def moveCptVertical(self, vertical):
         """
@@ -144,21 +147,22 @@ class GameEngine:
         :return: None
         """
         # captain's current position
-        position_x = self._captain.get_x()
-        position_y = self._captain.get_y() + vertical
+        position_x = self._captain.get_x() + vertical
+        position_y = self._captain.get_y()
         # if new position is None, move captain to new position
         if self._field[position_x][position_y] is None:
+            self._field[self._captain.get_x()][position_y] = None
             self._captain.set_position(position_x, position_y)
-            self._field[position_x][self._captain.get_y()] = None
+            self._field[position_x][position_y] = self._captain
         # if new position have veggie, can collect and add score
         elif isinstance(self._field[position_x][position_y], Veggie):
             veggie = self._field[position_x][position_y]
             print(f"Yummy! A delicious {veggie.get_name()}")
             self._captain.add_veggie(veggie)
             self._score += veggie.get_points()
+            self._field[self._captain.get_x()][position_y] = None
             self._captain.set_position(position_x, position_y)
             self._field[position_x][position_y] = self._captain
-            self._field[position_x][self._captain.get_y()] = None
         # if new position is rabbit, informed user, captain's position no change
         elif isinstance(self._field[position_x][position_y], Rabbit):
             print("Don't step on the bunnies!")
@@ -170,21 +174,22 @@ class GameEngine:
         :return: None
         """
         # captain's current position
-        position_x = self._captain.get_x() + horizontal
-        position_y = self._captain.get_y()
+        position_x = self._captain.get_x()
+        position_y = self._captain.get_y() + horizontal
         # if new position is None, move captain to new position
         if self._field[position_x][position_y] is None:
-            self._captain.set_position(position_x, position_y)
             self._field[position_x][self._captain.get_y()] = None
+            self._captain.set_position(position_x, position_y)
+            self._field[position_x][position_y] = self._captain
         # if new position have veggie, can collect and add score
         elif isinstance(self._field[position_x][position_y], Veggie):
             veggie = self._field[position_x][position_y]
             print(f"Yummy! A delicious {veggie.get_name()}")
             self._captain.add_veggie(veggie)
             self._score += veggie.get_points()
+            self._field[position_x][self._captain.get_y()] = None
             self._captain.set_position(position_x, position_y)
             self._field[position_x][position_y] = self._captain
-            self._field[position_x][self._captain.get_y()] = None
         # if new position is rabbit, informed user, captain's position no change
         elif isinstance(self._field[position_x][position_y], Rabbit):
             print("Don't step on the bunnies!")
@@ -197,31 +202,33 @@ class GameEngine:
         """
         direction = input("Would you like to move up(W), down(S), left(A), or right(D):")
         if direction == "w" or direction == "W":
-            position_y = self._captain.get_y() + 1
-            if 0 <= position_y < len(self._field):
-                self.moveCptVertical(1)
-            else:
-                print("You can't move that way!")
-        elif direction == "s" or direction == "S":
-            position_y = self._captain.get_y() -1
-            if 0 <= position_y < len(self._field):
+            position_x = self._captain.get_x() - 1
+            if 0 <= position_x < len(self._field):
                 self.moveCptVertical(-1)
             else:
                 print("You can't move that way!")
-        elif direction == "a" or direction =="A":
-            position_x = self._captain.get_x() -1
-            if 0 <= position_x < len(self._field[0]):
+        elif direction == "s" or direction == "S":
+            position_x = self._captain.get_x() + 1
+            if 0 <= position_x < len(self._field):
+                self.moveCptVertical(1)
+            else:
+                print("You can't move that way!")
+        elif direction == "a" or direction == "A":
+            position_y = self._captain.get_y() - 1
+            if 0 <= position_y < len(self._field[0]):
                 self.moveCptHorizontal(-1)
             else:
                 print("You can't move that way!")
         elif direction == "d" or direction == "D":
-            position_x = self._captain.get_x() + 1
-            if 0 <= position_x < len(self._field[0]):
+            position_y = self._captain.get_y() + 1
+            if 0 <= position_y < len(self._field[0]):
                 self.moveCptHorizontal(1)
             else:
                 print("You can't move that way!")
         else:
             print(f"{direction} is not a valid option")
+
+    
     def gameOver(self):
         """
         when veggies all clear, show game over message and related information
