@@ -8,7 +8,7 @@ class Veggie(FieldInhabitant):
         self._points = points
 
     def __str__(self):
-        return f"{self.get_inhabitant()}: {self._name} {self._points} points"
+        return f"{self.get_inhabitant}: {self._name} {self._points} points"
 
     def get_name(self):
         return self._name

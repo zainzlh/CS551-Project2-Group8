@@ -43,7 +43,7 @@ class GameEngine:
             self._field = [[None for _ in range(field_size[1])] for _ in range(field_size[0])]
 
             for row in veggie_csv:
-                inhabitant, name, points = row
+                name, inhabitant, points = row
                 veggie = Veggie(inhabitant, name, int(points))
                 self._veggies.append(veggie)
 
