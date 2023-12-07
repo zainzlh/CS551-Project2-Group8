@@ -158,8 +158,8 @@ class GameEngine:
     
             # determine out of boundary
             if 0 <= new_x < field_x and 0 <= new_y < field_y:
-                # determine new position have other rabbit or captain
-                if not (isinstance(self._field[new_x][new_y], Rabbit) or isinstance(self._field[new_x][new_y], Captain)):
+                # determine new position have other rabbit or captain or snake
+                if not (isinstance(self._field[new_x][new_y], Rabbit) or isinstance(self._field[new_x][new_y], Captain) or isinstance(self._field[new_x][new_y], Snake)):
                     # determine new position have veggie, remove veggie
                     if isinstance(self._field[new_x][new_y], Veggie):
                         self._field[new_x][new_y] = None
