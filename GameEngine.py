@@ -101,18 +101,19 @@ class GameEngine:
                 max_length += 1
             else:
                 max_length += len(item.get_inhabitant())
-        print("#" * ((max_length*2) + 2))
+        print("#" * ((max_length*3) + 2))
         # print field
         for row in self._field:
             line = ""
             for item in row:
                 if item is None:
-                    line += "  "
+                    line += "   "
                 else:
+                    line += " "
                     line += item.get_inhabitant()
                     line += " "
             print("#" + line + "#")
-        print("#" * ((max_length*2) + 2))
+        print("#" * ((max_length*3) + 2))
 
     def getScore(self):
         """
