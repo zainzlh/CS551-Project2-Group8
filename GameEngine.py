@@ -101,17 +101,19 @@ class GameEngine:
                 max_length += 1
             else:
                 max_length += len(item.get_inhabitant())
-        print("#" * (max_length + 2))
+        print("#" * ((max_length*3) + 2))
         # print field
         for row in self._field:
             line = ""
             for item in row:
                 if item is None:
-                    line += " "
+                    line += "   "
                 else:
+                    line += " "
                     line += item.get_inhabitant()
+                    line += " "
             print("#" + line + "#")
-        print("#" * (max_length + 2))
+        print("#" * ((max_length*3) + 2))
 
     def getScore(self):
         """
@@ -121,9 +123,9 @@ class GameEngine:
 
     def moveRabbits(self):
         """
-        the function control rabbits movement, they can move 1 steps each time(up, down, left or right)
+        the function control rabbits movement, they can move 1 steps each time(up, down, left, right or diagonal direction)
         when new position out of boundary or new position occupied by other rabbits or captains, skip
-        if have veggie on new position, remove veggie.
+        if there is veggie on new position, remove veggie.
         :return: None
         """
         field_x = len(self._field)
@@ -131,16 +133,28 @@ class GameEngine:
 
         for rabbit in self._rabbits:
             new_x, new_y = rabbit.get_x(), rabbit.get_y()
-            # get random number, 0-up, 1-down, 2-left, 3-right
-            direction = random.randrange(4)
-            if direction == 0:
-                new_y += 1
-            elif direction == 1:
+            # get random number, 0-up, 1-down, 2-left, 3-right, 4-upper left, 5-upper right, 6-lower left, 7-lower right
+            direction = random.randrange(8)
+            if direction == 0:  # up
                 new_y -= 1
-            elif direction == 2:
+            elif direction == 1:  # down
+                new_y += 1
+            elif direction == 2:  # left
                 new_x -= 1
-            else:
+            elif direction == 3:  # right
                 new_x += 1
+            elif direction == 4:  # upper left
+                new_x -= 1
+                new_y -= 1
+            elif direction == 5:  # upper right
+                new_x += 1
+                new_y -= 1
+            elif direction == 6:  # lower left
+                new_x -= 1
+                new_y += 1
+            else:  # lower right
+                new_x += 1
+                new_y += 1
     
             # determine out of boundary
             if 0 <= new_x < field_x and 0 <= new_y < field_y:
