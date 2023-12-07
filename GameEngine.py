@@ -3,6 +3,7 @@ import random
 from Veggie import Veggie
 from Captain import Captain
 from Rabbit import Rabbit
+from Snake import Snake
 import csv
 import pickle
 
@@ -18,6 +19,7 @@ class GameEngine:
         self._captain = None
         self._veggies = []
         self._score = 0
+        self._snake = None
 
     def getRandomEmptyLocation(self):
         x, y = random.randint(0, len(self._field) - 1), random.randint(0, len(self._field[0]) - 1)
@@ -63,10 +65,17 @@ class GameEngine:
             self._rabbits.append(rabbit)
             self._field[x][y] = rabbit
 
+    def initSnake(self):
+        self._snake = None
+        x, y = self.getRandomEmptyLocation()
+        self._snake = Snake(x, y)
+        self._field[x][y] = self._snake
+
     def initializeGame(self):
         self.initVeggies()
         self.initCaptain()
         self.initRabbits()
+        self.initSnake()
 
     def remainingVeggies(self):
         return sum(row.count(veggie) for row in self._field for veggie in self._veggies)
@@ -259,6 +268,51 @@ class GameEngine:
                 print("You can't move that way!")
         else:
             print(f"{direction} is not a valid option")
+
+    def moveSnake(self):
+        field_x = len(self._field)
+        field_y = len(self._field[0])
+
+        if self._snake is not None:
+            # the current position of the Captain
+            cpt_x = self._captain.get_x()
+            cpt_y = self._captain.get_y()
+
+            # the current new position for the Snake
+            new_x = self._snake.get_x()
+            new_y = self._snake.get_y()
+
+            # Determine the direction to move the Snake closer to the Captain
+            if new_x < cpt_x:
+                new_x += 1
+            elif new_x > cpt_x:
+                new_x -= 1
+            elif new_y < cpt_y:
+                new_y += 1
+            elif new_y > cpt_y:
+                new_y -= 1
+
+            # determine out of boundary
+            if 0 <= new_x < field_x and 0 <= new_y < field_y:
+                # Check if the new position is unoccupied by a vegetable or rabbit
+                if self._field[new_x][new_y] is None:
+                    # Move the Snake to the new position
+                    self._field[self._snake.get_x()][self._snake.get_y()] = None
+                    self._snake.set_position(new_x, new_y)
+                    self._field[new_x][new_y] = self._snake
+
+                # Check if the new position is the same as the Captain's position
+                elif new_x == cpt_x and new_y == cpt_y:
+                    print("The snake catches up to you,"
+                          " and you lose the last five vegetables that were added to your basket")
+                    # Captain loses the last five vegetables
+                    lastFive_veggies = self._captain.lose_lastFive_veggies()
+                    for veggie in lastFive_veggies:
+                        self._score -= veggie.get_points()
+
+                    # Reset the Snake to a new random, unoccupied position
+                    self._field[self._snake.get_x()][self._snake.get_y()] = None
+                    self.initSnake()
 
     def gameOver(self):
         """

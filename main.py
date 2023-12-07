@@ -16,6 +16,8 @@ def main():
         game.moveRabbits()
         game.moveCaptain()
 
+        game.moveSnake()
+
         remaining_veggies = game.remainingVeggies()
 
     game.gameOver()
