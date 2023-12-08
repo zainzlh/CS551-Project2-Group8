@@ -1,3 +1,8 @@
+# Group 8
+# Name: Linghao Zhao, Junran Yang
+# Date: 12/07/2023
+# Description: the function file for game engine
+
 import os.path
 import random
 from Veggie import Veggie
@@ -14,6 +19,10 @@ class GameEngine:
     HIGHSCOREFILE = "highscore.data"
 
     def __init__(self):
+        """
+        initial GameEngine object
+        :return: None
+        """
         self._field = []
         self._rabbits = []
         self._captain = None
@@ -22,12 +31,20 @@ class GameEngine:
         self._snake = None
 
     def getRandomEmptyLocation(self):
+        """
+        the function to generate random x and y for position setting
+        :return: int position x, y
+        """
         x, y = random.randint(0, len(self._field) - 1), random.randint(0, len(self._field[0]) - 1)
         while self._field[x][y] is not None:
             x, y = random.randint(0, len(self._field) - 1), random.randint(0, len(self._field[0]) - 1)
         return x, y
 
     def initVeggies(self):
+        """
+        read VeggieFile to initial Veggie objects
+        :return: None
+        """
         file_not_found = True
         filename = ""
         while file_not_found:
@@ -54,11 +71,19 @@ class GameEngine:
                 self._field[x][y] = random.choice(self._veggies)
 
     def initCaptain(self):
+        """
+        initial Captain object
+        :return: None
+        """
         x, y = self.getRandomEmptyLocation()
         self._captain = Captain(x, y)
         self._field[x][y] = self._captain
 
     def initRabbits(self):
+        """
+        initial Rabbit object
+        :return: None
+        """
         for _ in range(self.NUMBEROFRABBITS):
             x, y = self.getRandomEmptyLocation()
             rabbit = Rabbit(x, y)
@@ -66,18 +91,30 @@ class GameEngine:
             self._field[x][y] = rabbit
 
     def initSnake(self):
+        """
+        initial Snake object
+        :return: None
+        """
         self._snake = None
         x, y = self.getRandomEmptyLocation()
         self._snake = Snake(x, y)
         self._field[x][y] = self._snake
 
     def initializeGame(self):
+        """
+        call constructor function to initial the game
+        :return: None
+        """
         self.initVeggies()
         self.initCaptain()
         self.initRabbits()
         self.initSnake()
 
     def remainingVeggies(self):
+        """
+        calculate the number of the remaining veggies
+        :return: the number of the remaining veggies
+        """
         return sum(row.count(veggie) for row in self._field for veggie in self._veggies)
 
     def intro(self):
@@ -270,6 +307,10 @@ class GameEngine:
             print(f"{direction} is not a valid option")
 
     def moveSnake(self):
+        """
+        move Snake direction, set to vertical first, horizontal second
+        :return: None
+        """
         field_x = len(self._field)
         field_y = len(self._field[0])
 
@@ -327,37 +368,6 @@ class GameEngine:
                     # Reset the Snake to a new random, unoccupied position
                     self._field[self._snake.get_x()][self._snake.get_y()] = None
                     self.initSnake()
-
-            # if new_x < cpt_x:
-            #     new_x += 1
-            # elif new_x > cpt_x:
-            #     new_x -= 1
-            # elif new_y < cpt_y:
-            #     new_y += 1
-            # elif new_y > cpt_y:
-            #     new_y -= 1
-
-            # # determine out of boundary
-            # if 0 <= new_x < field_x and 0 <= new_y < field_y:
-            #     # Check if the new position is unoccupied by a vegetable or rabbit
-            #     if self._field[new_x][new_y] is None:
-            #         # Move the Snake to the new position
-            #         self._field[self._snake.get_x()][self._snake.get_y()] = None
-            #         self._snake.set_position(new_x, new_y)
-            #         self._field[new_x][new_y] = self._snake
-            #
-            #     # Check if the new position is the same as the Captain's position
-            #     elif new_x == cpt_x and new_y == cpt_y:
-            #         print("The snake catches up to you,"
-            #               " and you lose the last five vegetables that were added to your basket")
-            #         # Captain loses the last five vegetables
-            #         lastFive_veggies = self._captain.lose_lastFive_veggies()
-            #         for veggie in lastFive_veggies:
-            #             self._score -= veggie.get_points()
-            #
-            #         # Reset the Snake to a new random, unoccupied position
-            #         self._field[self._snake.get_x()][self._snake.get_y()] = None
-            #         self.initSnake()
 
     def gameOver(self):
         """
