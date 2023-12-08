@@ -311,9 +311,6 @@ class GameEngine:
         move Snake direction, set to vertical first, horizontal second
         :return: None
         """
-        field_x = len(self._field)
-        field_y = len(self._field[0])
-
         if self._snake is not None:
             # the current position of the Captain
             cpt_x = self._captain.get_x()
@@ -338,7 +335,8 @@ class GameEngine:
                 print("The snake catches up to you,"
                       " and you lose the last five vegetables that were added to your basket")
                 # Captain loses the last five vegetables
-                lastFive_veggies = self._captain.lose_lastFive_veggies()
+                lastFive_veggies = self._captain._veggies_collected[-5:]
+                self._captain._veggies_collected = self._captain._veggies_collected[:-5]
                 for veggie in lastFive_veggies:
                     self._score -= veggie.get_points()
 

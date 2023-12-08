@@ -14,14 +14,5 @@ class Captain(Creature):
     def add_veggie(self, veggie):
         self._veggies_collected.append(veggie)
 
-    def lose_lastFive_veggies(self):
-        """
-        delete the last five veggies in that were added to Captain's basket
-        :return: None
-        """
-        lastFive_veggies = self._veggies_collected[-5:]
-        self._veggies_collected = self._veggies_collected[:-5]
-        return lastFive_veggies
-
     def get_veggies_collected(self):
         return self._veggies_collected
